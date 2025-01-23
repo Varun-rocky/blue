@@ -1,47 +1,50 @@
 import React, { useState } from "react";
-import './Login.css';
 
-function Login({ setIsAuthenticated, setIsLoginPage }) {
+function Login({ setIsAuthenticated }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (email && password) {
-      setIsAuthenticated(true);
-    } else {
-      alert("Please fill in all fields");
+    try {
+      const response = await fetch("http://localhost:8081/api/v1/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem("jwtToken", data.token); // Save JWT token
+        setIsAuthenticated(true);
+      } else {
+        alert("Invalid login credentials");
+      }
+    } catch (error) {
+      console.error("Error during login:", error);
     }
   };
 
   return (
-    <div className="login-container">
-      <h2 className="login-header">Login</h2>
-      <form onSubmit={handleLogin} className="login-form">
+    <div>
+      <h2>Login</h2>
+      <form onSubmit={handleLogin}>
         <input
           type="email"
           placeholder="Email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
-          className="login-input"
         />
         <input
           type="password"
           placeholder="Password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
-          className="login-input"
         />
-        <button
-          type="submit"
-          className="login-button"
-        >
-          Login
-        </button>
+        <button type="submit">Login</button>
       </form>
-      <p className="switch-page" onClick={() => setIsLoginPage(false)}>
-        Don't have an account? Sign up here.
-      </p>
     </div>
   );
 }

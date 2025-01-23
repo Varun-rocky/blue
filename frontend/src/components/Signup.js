@@ -1,48 +1,49 @@
 import React, { useState } from "react";
-import './Signup.css';
+import "./Signup.css";
 
-function Signup({ setIsAuthenticated, setIsLoginPage }) {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+function Signup({ setIsAuthenticated }) {
+  const [isLogin, setIsLogin] = useState(false); // Toggle between signup and login
+// no logic for now as of no api 
+  const handleSwitch = () => setIsLogin(!isLogin);
 
   const handleSignup = (e) => {
     e.preventDefault();
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+    // Mock signup logic
     if (email && password) {
-      alert("Account created successfully!");
+      localStorage.setItem("jwtToken", "mockToken");
       setIsAuthenticated(true);
-    } else {
-      alert("Please fill in all fields");
+    }
+  };
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    const email = e.target.email.value;
+    const password = e.target.password.value;
+    // Mock login logic
+    if (email && password) {
+      localStorage.setItem("jwtToken", "mockToken");
+      setIsAuthenticated(true);
     }
   };
 
   return (
     <div className="signup-container">
-      <h2 className="signup-header">Signup</h2>
-      <form onSubmit={handleSignup} className="signup-form">
-        <input
-          type="email"
-          placeholder="Email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className="signup-input"
-        />
-        <input
-          type="password"
-          placeholder="Password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          className="signup-input"
-        />
-        <button
-          type="submit"
-          className="signup-button"
-        >
-          Signup
-        </button>
-      </form>
-      <p className="switch-page" onClick={() => setIsLoginPage(true)}>
-        Already have an account? Login here.
-      </p>
+      <div className="form-container">
+        <h1>{isLogin ? "Login" : "Sign Up"}</h1>
+        <form onSubmit={isLogin ? handleLogin : handleSignup}>
+          <input type="email" name="email" placeholder="Email" required />
+          <input type="password" name="password" placeholder="Password" required />
+          <button type="submit">{isLogin ? "Login" : "Sign Up"}</button>
+        </form>
+        <p>
+          {isLogin ? "New user? " : "Already have an account? "}
+          <button className="toggle-button" onClick={handleSwitch}>
+            {isLogin ? "Create an Account" : "Login"}
+          </button>
+        </p>
+      </div>
     </div>
   );
 }

@@ -1,26 +1,32 @@
-import React, { useState } from "react";
-import Login from "./components/Login";
+import React, { useState, useEffect } from "react";
 import Signup from "./components/Signup";
-import Logout from "./components/Logout";
-import './App.css'; // Optional: Add any global styles here
+import Home from "./components/Home";
+import "./App.css";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [isLoginPage, setIsLoginPage] = useState(false);  // Track which page is being shown
+
+  // Check if the user is already logged in on page load
+  useEffect(() => {
+    const token = localStorage.getItem("jwtToken");
+    if (token) {
+      setIsAuthenticated(true);
+    }
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem("jwtToken");
+    setIsAuthenticated(false);
+  };
 
   return (
     <div className="App">
-      <h1>Blue Reserve</h1>
       {!isAuthenticated ? (
-        <>
-          {isLoginPage ? (
-            <Login setIsAuthenticated={setIsAuthenticated} setIsLoginPage={setIsLoginPage} />
-          ) : (
-            <Signup setIsAuthenticated={setIsAuthenticated} setIsLoginPage={setIsLoginPage} />
-          )}
-        </>
+        <div>
+          <Signup setIsAuthenticated={setIsAuthenticated} />
+        </div>
       ) : (
-        <Logout setIsAuthenticated={setIsAuthenticated} />
+        <Home handleLogout={handleLogout} />
       )}
     </div>
   );
