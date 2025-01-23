@@ -1,8 +1,10 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Login({ setIsAuthenticated }) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -19,6 +21,7 @@ function Login({ setIsAuthenticated }) {
         const data = await response.json();
         localStorage.setItem("jwtToken", data.token); // Save JWT token
         setIsAuthenticated(true);
+        navigate("/home"); // Redirect to Home page
       } else {
         alert("Invalid login credentials");
       }

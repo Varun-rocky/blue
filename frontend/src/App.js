@@ -1,34 +1,29 @@
-import React, { useState, useEffect } from "react";
-import Signup from "./components/Signup";
+import React, { useState } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import Login from "./components/Login";
 import Home from "./components/Home";
-import "./App.css";
+import Signup from "./components/Signup";
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Check if the user is already logged in on page load
-  useEffect(() => {
-    const token = localStorage.getItem("jwtToken");
-    if (token) {
-      setIsAuthenticated(true);
-    }
-  }, []);
-
-  const handleLogout = () => {
-    localStorage.removeItem("jwtToken");
-    setIsAuthenticated(false);
-  };
-
   return (
-    <div className="App">
-      {!isAuthenticated ? (
-        <div>
-          <Signup setIsAuthenticated={setIsAuthenticated} />
-        </div>
-      ) : (
-        <Home handleLogout={handleLogout} />
-      )}
-    </div>
+    <Router>
+      <Routes>
+        <Route
+          path="/"
+          element={<Signup setIsAuthenticated={setIsAuthenticated} />}
+        />
+        <Route
+          path="/login"
+          element={<Login setIsAuthenticated={setIsAuthenticated} />}
+        />
+        <Route
+          path="/home"
+          element={isAuthenticated ? <Home /> : <Login setIsAuthenticated={setIsAuthenticated} />}
+        />
+      </Routes>
+    </Router>
   );
 }
 
